@@ -33,6 +33,7 @@ class App extends Component {
     if (token) {
       let user = { userId: jwt.decode(token).id };
       api.games.createGame(user).then(game => {
+        console.log(game)
         this.setState(state => {
           return {
             gameStart: new Date(),

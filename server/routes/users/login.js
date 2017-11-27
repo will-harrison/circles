@@ -4,8 +4,8 @@ module.exports = {
   config: {
     auth: { mode: "optional" },
     handler: function (request, reply) {
-      let { email, password } = request.payload;
-      this.models.User.filter({ email: email })
+      let { gamerName, password } = request.payload;
+      this.models.User.filter({ gamerName: gamerName })
         .then(users => {
           let [user] = users;
           if (!user) throw "Email and password combination are incorrect.";
@@ -14,14 +14,10 @@ module.exports = {
         .then(user => {
           if (!user) throw "Email and password combination are incorrect.";
           delete user.password;
-          console.log(user)
           return user.generateJWT();
         })
-        .then(user => reply(user))
-        .catch(err => {
-          console.log(err)
-          reply(err)
-        })
+        .then(user => reply({ token: user }))
+        .catch(err => reply(err))
     }
   }
 };

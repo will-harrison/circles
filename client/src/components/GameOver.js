@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import api from '../api';
+import Stats from './Stats';
 
 class GameOver extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class GameOver extends Component {
     let { startNewGame } = this.props;
     return (
       <Container>
+        <Stats />
         <Status>Game Over</Status>
         <NewGame onClick={startNewGame}>New Game</NewGame>
       </Container>

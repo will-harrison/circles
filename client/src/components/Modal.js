@@ -13,7 +13,7 @@ const Container = styled.div`
   position: absolute;
   width: 75vh;
   height: 75vh;
-  background-color: rgba(0, 0, 0, .85);
+  background-color: rgba(0, 0, 0, .6);
   display: flex;
   flex-direction: column;
   justify-content: center;

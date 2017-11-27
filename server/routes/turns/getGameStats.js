@@ -26,7 +26,7 @@ module.exports = {
       let { gameId } = request.payload;
       console.log(gameId)
       this.models.Turn
-        .filter({ gameId })
+        .getAll(gameId, { index: "gameId" })
         .run()
         .then(turns => {
           console.log(turns)

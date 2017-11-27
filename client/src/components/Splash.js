@@ -29,8 +29,39 @@ class Splash extends Component {
   setAuthType = (type) => {
     this.setState(state => {
       return {
+        ...state,
         modal: true,
         authType: type
+      }
+    })
+  }
+
+  signOut = () => {
+    console.log("signOut")
+    localStorage.removeItem("token");
+    this.setState(state => {
+      return {
+        ...state,
+        authed: false
+      }
+    })
+  }
+
+  isAuthed = (authed) => {
+    this.setState(state => {
+      return {
+        ...state,
+        authed,
+        modal: false
+      }
+    })
+  }
+
+  cancelClick = (e) => {
+    this.setState(state => {
+      return {
+        ...state,
+        modal: false
       }
     })
   }
@@ -40,7 +71,12 @@ class Splash extends Component {
     let { startNewGame } = this.props;
     return (
       <div>
-        {modal && <Signup authType={authType} />}
+        {modal &&
+          <Signup
+            authType={authType}
+            isAuthed={(authed) => this.isAuthed(authed)}
+            cancelClick={this.cancelClick} />
+        }
         <Container modal={modal}>
           <Title>Circles</Title>
           <Instructions>
@@ -48,7 +84,10 @@ class Splash extends Component {
             <div>Be fast. Be accurate.</div>
           </Instructions>
           <NewGame onClick={startNewGame}>New Game</NewGame>
-          <Auth authed={authed} authType={(type) => this.setAuthType(type)} />
+          <Auth
+            authed={authed}
+            authType={(type) => this.setAuthType(type)}
+            onSignOut={this.signOut} />
         </Container>
       </div>
     );
@@ -74,18 +113,19 @@ const Instructions = styled.div.attrs({ className: "f1 fw1" }) `
 `;
 
 const NewGame = styled.div.attrs({ className: "f3 fw1" }) `
-border: 1px solid #fff;
-padding: 5px 15px;
-width: 200px;
-margin: 20px auto;
-transition: all .3s;
-user-select: none;
-text-align: center;
+  border: 1px solid #fff;
+  padding: 5px 15px;
+  width: 200px;
+  margin: 20px auto;
+  transition: all .3s;
+  user-select: none;
+  text-align: center;
 
-&:hover {
-  background-color: #fff;
-  color: #336699;
-}
+  &:hover {
+    background-color: #fff;
+    color: #336699;
+    cursor: pointer;
+  }
 `
 
 

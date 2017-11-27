@@ -9,8 +9,17 @@ module.exports = {
         .save()
         .then(res => {
           delete res.password;
-          reply(res);
+          return res;
         })
+        .then(user => {
+          if (!user) throw "Email and password combination are incorrect.";
+          return user.generateJWT();
+        })
+        .then(user => {
+          if (!user) throw "Email and password combination are incorrect.";
+          reply(JSON.stringify({ token: user }))
+        })
+
         .catch(err => reply(err))
     }
   }

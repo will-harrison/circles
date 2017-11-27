@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (db) => {
   let User = db.createModel("User", {
-    email: db.type.string().required(),
+    gamerName: db.type.string().required(),
     password: db.type.string().required()
   });
 
@@ -17,7 +17,7 @@ module.exports = (db) => {
   User.define("comparePassword", function (password) {
     return bcrypt.compare(password, this.password)
       .then(authed => authed ? this : false)
-      .catch(bcrypt.MISMATCH_ERROR, () => "Email and password combination are incorrect.")
+      .catch(bcrypt.MISMATCH_ERROR, () => "Name and password combination are incorrect.")
       .catch(err => err);
   });
 
@@ -29,9 +29,9 @@ module.exports = (db) => {
   });
 
   User.pre("save", function (next) {
-    return User.filter({ email: this.email })
+    return User.filter({ gamerName: this.gamerName })
       .then(users => {
-        if (users.length !== 0) throw "Email and password combination are incorrect."
+        if (users.length !== 0) throw "Name and password combination are incorrect."
         return this.generatePassword()
           .then(() => next())
           .catch(err => next(err));

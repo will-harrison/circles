@@ -11,26 +11,27 @@ class Signup extends Component {
       gamerName: "",
       password: "",
       generatedName: "",
-      authType: [
-        {
+      authTypes: {
+        signup: {
           name: "signup",
           title: "Sign Up",
           process: this.signUp
         },
-        {
+        login: {
           name: "login",
           title: "Log In",
           process: this.logIn
         }
 
-      ]
+      }
     };
   }
 
   componentDidMount() {
     this.setState(state => {
       return {
-        generatedName: vgng.random()
+        generatedName: vgng.random(),
+        authType: this.props.authType
       };
     });
   }
@@ -45,26 +46,53 @@ class Signup extends Component {
     });
   }
 
+  signUp = () => {
+    let { gamerName, password } = this.state;
+    api.users.createUser({ gamerName, password }).then(token => {
+      if (token) {
+        localStorage.setItem("token", token.token);
+        this.props.isAuthed(true);
+      };
+    });
+  }
+
   logIn = () => {
     let { gamerName, password } = this.state;
-    api.users.login({ gamerName, password }).then(user => {
+    api.users.login({ gamerName, password }).then(token => {
+      console.log(token)
+      if (token) {
+        localStorage.setItem("token", token.token);
+        this.props.isAuthed(true);
+      }
     })
   }
 
+  onFormSubmit = (e) => {
+    e.preventDefault();
+    let { authTypes } = this.state;
+    let { authType } = this.props;
+    authTypes[authType].process();
+  }
+
+  cancelClick = (e) => {
+
+  }
+
   render() {
-    console.log(this.state)
+    let { authTypes } = this.state;
+    let { authType } = this.props;
     return (
       <Container>
         <Modal>
-          <Title>Sign Up</Title>
-          <form>
+          <Title>{authTypes[authType].title}</Title>
+          <form onSubmit={this.onFormSubmit}>
             <InputRow>
               <Label>Gamer Name</Label>
               <Input
                 name={"gamerName"}
                 value={this.state.gamerName}
                 onChange={this.onInputChange}
-                placeholder={this.state.generatedName}
+                placeholder={authType === "signup" ? this.state.generatedName : ""}
                 autoFocus />
             </InputRow>
             <InputRow>
@@ -75,9 +103,10 @@ class Signup extends Component {
                 value={this.state.password}
                 onChange={this.onInputChange} />
             </InputRow>
-            <InputRow>
-              <Button type={"submit"}>SEND</Button>
-            </InputRow>
+            <ButtonRow>
+              <Button type={"submit"}>Activate</Button>
+              <Button onClick={this.props.cancelClick}>Cancel</Button>
+            </ButtonRow>
           </form>
         </Modal>
       </Container>
@@ -110,22 +139,27 @@ const Label = styled.div.attrs({ className: "f4 fw1" }) `
   color: #fff;
 `;
 
-const Button = styled.button.attrs({ className: "f5 fw1" }) `
-border: 1px solid #fff;
-border-radius: 0;
-padding: 5px 15px;
-width: 30%;
-margin: 5px auto;
-transition: all .3s;
-user-select: none;
-text-align: center;
-display: flex;
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
 
-&:hover {
-  background-color: #fff;
-  color: #000;
-  font-weight: 400;
-}
+const Button = styled.button.attrs({ className: "f5 fw1" }) `
+  border: 1px solid #fff;
+  border-radius: 0;
+  padding: 5px 15px;
+  margin: 5px auto;
+  transition: all .3s;
+  user-select: none;
+  text-align: center;
+  text-transform: uppercase;
+
+  &:hover {
+    background-color: #fff;
+    color: #000;
+    font-weight: 400;
+  }
 `;
 
 export default Signup;
