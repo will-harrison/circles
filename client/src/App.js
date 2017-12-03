@@ -15,6 +15,7 @@ class App extends Component {
       timeLeft: "",
       gameStart: "",
       gameId: "",
+      user: "",
       turn: {
         cx: this.randRange(0, window.innerWidth),
         cy: this.randRange(0, window.innerHeight),
@@ -29,30 +30,43 @@ class App extends Component {
   }
 
   startNewGame = () => {
-    let token = localStorage.getItem("token");
-    if (token) {
-      let user = { userId: jwt.decode(token).id };
-      api.games.createGame(user).then(game => {
-        console.log(game)
-        this.setState(state => {
-          return {
-            gameStart: new Date(),
-            timeLeft: this.state.gameDuration,
-            gameId: game.id,
-            started: true
-          }
-        }, () => {
-          this.countDown()
-          this.drawCircle();
-        })
-
+    let user = this.state.user;
+    console.log(user)
+    api.games.createGame(user).then(game => {
+      console.log(game)
+      this.setState(state => {
+        return {
+          gameStart: new Date(),
+          timeLeft: this.state.gameDuration,
+          gameId: game.id,
+          started: true
+        }
+      }, () => {
+        this.countDown()
+        this.drawCircle();
       })
-
-    }
+    })
   }
 
   componentDidMount() {
-
+    let token = localStorage.getItem("token");
+    if (token) {
+      let user = jwt.decode(token).id;
+      this.setState(state => {
+        return {
+          ...state,
+          user
+        }
+      })
+    } else {
+      const defaultUser = 1;
+      this.setState(state => {
+        return {
+          ...state,
+          user: defaultUser
+        };
+      });
+    }
   }
 
   countDown = () => {

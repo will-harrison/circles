@@ -2,7 +2,7 @@ const hapi = require("hapi");
 const hapiAuthJWT2 = require("hapi-auth-jwt2");
 const api = require("./api");
 
-require('dotenv').config()
+require('dotenv').config();
 
 const server = new hapi.Server();
 

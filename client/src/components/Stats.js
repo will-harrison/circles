@@ -10,7 +10,8 @@ class Stats extends Component {
   }
 
   componentDidMount() {
-
+    let { gameId } = this.props;
+    api.turns.getGameStats(gameId)
   }
 
   render() {

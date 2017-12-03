@@ -37,7 +37,6 @@ class Splash extends Component {
   }
 
   signOut = () => {
-    console.log("signOut")
     localStorage.removeItem("token");
     this.setState(state => {
       return {
